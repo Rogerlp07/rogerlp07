@@ -1,0 +1,194 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 1.5rem 1rem; font-family: var(--font-sans); }
+  .header { text-align: center; margin-bottom: 2rem; }
+  .logo { font-size: 48px; margin-bottom: 8px; }
+  .title { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .subtitle { font-size: 14px; color: var(--color-text-secondary); margin-top: 4px; }
+  .section { margin-bottom: 1.25rem; }
+  .label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; display: block; }
+  input[type="text"], textarea { width: 100%; padding: 10px 14px; font-size: 15px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); outline: none; transition: border-color 0.15s; font-family: var(--font-sans); }
+  textarea { resize: none; height: 72px; line-height: 1.5; }
+  input[type="text"]:focus, textarea:focus { border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .sabores { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .sabor-card { cursor: pointer; border-radius: var(--border-radius-lg); border: 2px solid var(--color-border-tertiary); padding: 1rem; text-align: center; transition: all 0.15s; background: var(--color-background-primary); }
+  .sabor-card:hover { border-color: #1D9E75; }
+  .sabor-card.selected { border-color: #1D9E75; background: #E1F5EE; }
+  .sabor-card.selected .sabor-nombre { color: #0F6E56; }
+  .sabor-icono { font-size: 34px; margin-bottom: 5px; }
+  .sabor-nombre { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+  .sabor-desc { font-size: 12px; color: var(--color-text-secondary); }
+  .cantidad-row { display: flex; align-items: center; gap: 12px; }
+  .btn-cantidad { width: 36px; height: 36px; border-radius: 50%; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); cursor: pointer; font-size: 18px; color: var(--color-text-primary); display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+  .btn-cantidad:hover { background: var(--color-background-tertiary); }
+  .cantidad-val { font-size: 20px; font-weight: 500; min-width: 28px; text-align: center; color: var(--color-text-primary); }
+  .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.25rem 0; }
+  .resumen { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.25rem; border: 0.5px solid var(--color-border-tertiary); }
+  .resumen-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .resumen-row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; color: var(--color-text-secondary); gap: 12px; }
+  .resumen-row span:last-child { color: var(--color-text-primary); font-weight: 500; text-align: right; }
+  .btn-enviar { width: 100%; padding: 14px; background: #25D366; border: none; border-radius: var(--border-radius-lg); color: #fff; font-size: 16px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.15s; }
+  .btn-enviar:hover { background: #1ebe5d; }
+  .wa-icon { width: 22px; height: 22px; flex-shrink: 0; }
+  .error { font-size: 12px; color: #D85A30; margin-top: 5px; display: none; }
+  .nota { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-top: 1rem; line-height: 1.5; }
+  .opcional { font-size: 11px; color: var(--color-text-secondary); font-weight: 400; margin-left: 4px; }
+</style>
+
+<div class="wrap">
+  <div class="header">
+    <div class="logo">🌯</div>
+    <div class="title">Pide tu Burrito</div>
+    <div class="subtitle">Completa tu pedido y lo recibimos por WhatsApp</div>
+  </div>
+
+  <div class="section">
+    <span class="label">Nombre completo</span>
+    <input type="text" id="nombre" placeholder="Ej. Juan García" maxlength="60" />
+    <div class="error" id="err-nombre">Por favor ingresa tu nombre.</div>
+  </div>
+
+  <div class="row2">
+    <div class="section">
+      <span class="label">Empresa / Oficina / Depto. <span class="opcional">(opcional)</span></span>
+      <input type="text" id="empresa" placeholder="Ej. Depto. Ventas" maxlength="60" />
+    </div>
+    <div class="section">
+      <span class="label">Teléfono de contacto <span class="opcional">(opcional)</span></span>
+      <input type="text" id="telefono" placeholder="Ej. 442 123 4567" maxlength="20" />
+    </div>
+  </div>
+
+  <div class="section">
+    <span class="label">Dirección de entrega</span>
+    <textarea id="direccion" placeholder="Calle, número, colonia, referencias…"></textarea>
+    <div class="error" id="err-direccion">Por favor ingresa la dirección de entrega.</div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <span class="label">Elige el sabor</span>
+    <div class="sabores">
+      <div class="sabor-card" id="card-bistec" onclick="seleccionarSabor('Bistec')">
+        <div class="sabor-icono">🥩</div>
+        <div class="sabor-nombre">Bistec</div>
+        <div class="sabor-desc">Res a la plancha</div>
+      </div>
+      <div class="sabor-card" id="card-milanesa" onclick="seleccionarSabor('Milanesa')">
+        <div class="sabor-icono">🍖</div>
+        <div class="sabor-nombre">Milanesa</div>
+        <div class="sabor-desc">Empanizada crujiente</div>
+      </div>
+    </div>
+    <div class="error" id="err-sabor">Por favor selecciona un sabor.</div>
+  </div>
+
+  <div class="section">
+    <span class="label">Cantidad</span>
+    <div class="cantidad-row">
+      <button class="btn-cantidad" onclick="cambiarCantidad(-1)">−</button>
+      <span class="cantidad-val" id="cantidad-display">1</span>
+      <button class="btn-cantidad" onclick="cambiarCantidad(1)">+</button>
+      <span style="font-size:14px; color: var(--color-text-secondary);">burrito(s)</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="resumen">
+    <div class="resumen-title">Resumen del pedido</div>
+    <div class="resumen-row"><span>Nombre</span><span id="r-nombre">—</span></div>
+    <div class="resumen-row" id="row-empresa" style="display:none"><span>Empresa / Depto.</span><span id="r-empresa">—</span></div>
+    <div class="resumen-row"><span>Dirección</span><span id="r-direccion">—</span></div>
+    <div class="resumen-row"><span>Sabor</span><span id="r-sabor">—</span></div>
+    <div class="resumen-row"><span>Cantidad</span><span id="r-cantidad">1</span></div>
+  </div>
+
+  <button class="btn-enviar" onclick="enviarWhatsApp()">
+    <svg class="wa-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M16 4C9.373 4 4 9.373 4 16c0 2.385.658 4.613 1.801 6.52L4 28l5.65-1.773A11.94 11.94 0 0016 28c6.627 0 12-5.373 12-12S22.627 4 16 4zm-3.145 6.5c-.27 0-.713.1-1.086.506-.373.406-1.424 1.392-1.424 3.394 0 2.003 1.457 3.94 1.66 4.212.203.272 2.842 4.538 7.01 6.186 1.164.448 2.073.716 2.78.916.924.26 1.765.224 2.429.136.74-.1 2.28-.931 2.6-1.832.32-.9.32-1.67.224-1.832-.097-.162-.36-.259-.754-.453-.394-.194-2.332-1.15-2.693-1.28-.36-.13-.622-.194-.882.194-.26.387-1.007 1.28-1.234 1.543-.226.26-.453.292-.847.097-.394-.194-1.662-.613-3.168-1.956-1.17-1.045-1.96-2.336-2.19-2.73-.226-.39-.024-.601.17-.795.175-.174.394-.453.59-.68.197-.226.26-.388.393-.648.13-.26.065-.488-.032-.68-.098-.195-.883-2.126-1.209-2.909-.319-.763-.643-.66-.883-.672a15.9 15.9 0 00-.754-.015z" fill="white"/>
+    </svg>
+    Enviar pedido por WhatsApp
+  </button>
+
+  <div class="nota">Al hacer clic abrirás WhatsApp con tu pedido listo para enviar.</div>
+</div>
+
+<script>
+  let sabor = '';
+  let cantidad = 1;
+  const NUMERO_WA = '5214421234567';
+
+  function seleccionarSabor(s) {
+    sabor = s;
+    document.querySelectorAll('.sabor-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('card-' + s.toLowerCase()).classList.add('selected');
+    actualizarResumen();
+    document.getElementById('err-sabor').style.display = 'none';
+  }
+
+  function cambiarCantidad(delta) {
+    cantidad = Math.max(1, Math.min(10, cantidad + delta));
+    document.getElementById('cantidad-display').textContent = cantidad;
+    actualizarResumen();
+  }
+
+  function actualizarResumen() {
+    const nom = document.getElementById('nombre').value.trim();
+    const emp = document.getElementById('empresa').value.trim();
+    const dir = document.getElementById('direccion').value.trim();
+    document.getElementById('r-nombre').textContent = nom || '—';
+    document.getElementById('r-direccion').textContent = dir || '—';
+    document.getElementById('r-sabor').textContent = sabor || '—';
+    document.getElementById('r-cantidad').textContent = cantidad;
+    if (emp) {
+      document.getElementById('r-empresa').textContent = emp;
+      document.getElementById('row-empresa').style.display = 'flex';
+    } else {
+      document.getElementById('row-empresa').style.display = 'none';
+    }
+  }
+
+  ['nombre','empresa','telefono','direccion'].forEach(id => {
+    document.getElementById(id).addEventListener('input', function() {
+      actualizarResumen();
+      if (this.value.trim()) {
+        const err = document.getElementById('err-' + id);
+        if (err) err.style.display = 'none';
+      }
+    });
+  });
+
+  function enviarWhatsApp() {
+    const nombre = document.getElementById('nombre').value.trim();
+    const empresa = document.getElementById('empresa').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const direccion = document.getElementById('direccion').value.trim();
+    let valido = true;
+
+    if (!nombre) { document.getElementById('err-nombre').style.display = 'block'; valido = false; }
+    if (!direccion) { document.getElementById('err-direccion').style.display = 'block'; valido = false; }
+    if (!sabor) { document.getElementById('err-sabor').style.display = 'block'; valido = false; }
+    if (!valido) return;
+
+    const empresaLinea = empresa ? `🏢 *Empresa / Depto.:* ${empresa}\n` : '';
+    const telLinea = telefono ? `📞 *Teléfono:* ${telefono}\n` : '';
+
+    const msg =
+`🌯 *NUEVO PEDIDO*
+
+👤 *Nombre:* ${nombre}
+${empresaLinea}${telLinea}📍 *Dirección de entrega:* ${direccion}
+
+🍽️ *Sabor:* Burrito de ${sabor}
+🔢 *Cantidad:* ${cantidad} burrito${cantidad > 1 ? 's' : ''}
+
+¡Gracias por tu pedido! 😊`;
+
+    const url = `https://wa.me/${NUMERO_WA}?text=${encodeURIComponent(msg)}`;
+    openLink(url);
+  }
+</script>
